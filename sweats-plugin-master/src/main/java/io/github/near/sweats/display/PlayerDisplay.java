@@ -95,7 +95,7 @@ final class PlayerDisplay {
                 score.setScore(sidebarScores.length - index);
                 sidebarScores[index] = score;
             }
-            if (sidebarVisible) {
+            if (settings.defaultVisible()) {
                 player.setScoreboard(sidebar);
             }
         } else {

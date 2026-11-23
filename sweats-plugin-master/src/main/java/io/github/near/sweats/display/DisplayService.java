@@ -254,7 +254,7 @@ public final class DisplayService implements Listener {
         stopRefreshTask();
         if (settings.scoreboardEnabled()) {
             final long interval = settings.refreshTicks();
-            refreshTask = Bukkit.getScheduler().runTaskTimer(plugin, this::refreshAll, interval, interval);
+            refreshTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> refreshAll(), interval, interval);
         }
         if (settings.tablistEnabled()
                 && (!settings.scoreboardEnabled() || settings.refreshTicks() != TABLIST_REFRESH_TICKS)) {

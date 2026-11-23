@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 final class DisplayLayout {
@@ -107,5 +108,25 @@ final class DisplayLayout {
             index++;
         }
         return color == null ? fallback : color;
+    }
+
+    static Component tabListHeader(final DisplaySettings settings) {
+        return Component.text("✦ S W E A T S ✦", DisplayTheme.PURPLE, TextDecoration.BOLD)
+                .append(Component.newline())
+                .append(Component.text(settings.serverName(), DisplayTheme.SECONDARY))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text("Welcome to Sweats!", DisplayTheme.TEXT));
+    }
+
+    static Component tabListFooter(final int online, final int ping, final DisplaySettings settings) {
+        return Component.text("ONLINE PLAYERS: ", DisplayTheme.SECONDARY)
+                .append(Component.text(online, DisplayTheme.ONLINE))
+                .append(Component.newline())
+                .append(Component.text("YOUR PING: ", DisplayTheme.SECONDARY))
+                .append(Component.text(ping + " ms", DisplayTheme.BLUE))
+                .append(Component.newline())
+                .append(Component.newline())
+                .append(Component.text(settings.serverAddress(), DisplayTheme.BLUE));
     }
 }

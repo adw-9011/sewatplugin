@@ -52,19 +52,24 @@ final class DisplayLayout {
     private static Component render(
             final String template, final DisplaySnapshot snapshot, final DisplaySettings settings) {
         final Matcher matcher = PLACEHOLDER.matcher(template);
-        Component line = Component.empty();
+        Component line = null;
         int cursor = 0;
         while (matcher.find()) {
             if (matcher.start() > cursor) {
-                line = line.append(LEGACY.deserialize(template.substring(cursor, matcher.start())));
+                line = append(line, LEGACY.deserialize(template.substring(cursor, matcher.start())));
             }
-            line = line.append(value(matcher.group(1), template, matcher.start(), snapshot, settings));
+            line = append(line, value(matcher.group(1), template, matcher.start(), snapshot, settings));
             cursor = matcher.end();
         }
         if (cursor < template.length()) {
-            line = line.append(LEGACY.deserialize(template.substring(cursor)));
+            line = append(line, LEGACY.deserialize(template.substring(cursor)));
         }
-        return line;
+        return line == null ? Component.empty() : line;
+    }
+
+    /** Keep the initial text component at the root so later styled placeholders retain their own colors. */
+    private static Component append(final Component line, final Component part) {
+        return line == null ? part : line.append(part);
     }
 
     private static Component value(

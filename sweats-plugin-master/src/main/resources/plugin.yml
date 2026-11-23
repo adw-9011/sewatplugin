@@ -1,0 +1,385 @@
+name: Sweats
+version: '${version}'
+main: io.github.near.sweats.SweatsPlugin
+api-version: '26.3'
+authors: [near]
+description: /show, chat mentions, /scare, /gif mapart, /stats menus, /ram, /ping, /nick, /leaderboard, ranks, permissions, moderation, maintenance mode, runes and the Runic Table, login and scoreboard/tablist.
+
+# Downloaded by Paper into the plugin's classpath before it is enabled. The auth database needs it.
+libraries:
+  - org.xerial:sqlite-jdbc:3.49.1.0
+
+commands:
+  show:
+    description: Show the item you are holding or wearing, with a hoverable tooltip.
+    usage: /show [hand|offhand|helmet|chestplate|leggings|boots]
+    permission: sweats.show
+  sweats:
+    description: Sweats management and scoreboard commands.
+    usage: /sweats <reload|auth|vote|scoreboard> [arguments]
+  scare:
+    description: Send a jumpscare to a player.
+    usage: /scare <player> [jumpscare1|jumpscare2|jumpscare3|jumpscare4]
+    permission: sweats.scare
+  gif:
+    description: Turn an image from plugins/Sweats/gifs into a mapart item.
+    usage: /gif <image>
+    permission: sweats.gif
+  stats:
+    description: Open a chest menu with a player's statistics.
+    usage: /stats [player]
+    permission: sweats.stats
+  ram:
+    description: Show JVM heap usage.
+    usage: /ram
+    permission: sweats.ram
+  emoji:
+    description: List every chat emoji and the code that types it.
+    usage: /emoji
+    aliases: [emojis]
+  ping:
+    description: Show your ping or another player's ping.
+    usage: /ping [player]
+    permission: sweats.ping
+  rank:
+    description: Create and assign ranks.
+    usage: /rank <create|delete|set|info|list>
+    permission: sweats.rank.manage
+  nick:
+    description: Set a nickname, shown in chat and the tab list with a ~ prefix.
+    usage: /nick <nickname> | /nick <player> <nickname|off>
+    permission: sweats.nick
+  leaderboard:
+    description: Place and manage the playtime leaderboard display.
+    usage: /leaderboard <place [category]|remove|list|categories>
+    permission: sweats.leaderboard
+    aliases: [lb]
+  grant:
+    description: Grant or revoke permission nodes for players and ranks.
+    usage: /grant <user|rank|revoke|list>
+    permission: sweats.permission.manage
+  ban:
+    description: Ban a player.
+    usage: /ban <player|@a|@r|@p> <duration> <reason>
+    permission: sweats.banperm
+  kick:
+    description: Kick a player.
+    usage: /kick <player|@a|@r|@p> <reason>
+    permission: sweats.kickperm
+  mute:
+    description: Mute a player.
+    usage: /mute <player|@a|@r|@p> <duration> <reason>
+    permission: sweats.muteperm
+  unban:
+    description: Remove a player's active ban.
+    usage: /unban <player>
+    permission: sweats.unbanperm
+  unmute:
+    description: Remove a player's active mute.
+    usage: /unmute <player|@a|@r|@p>
+    permission: sweats.unmuteperm
+  history:
+    description: Show a player's punishment history.
+    usage: /history <player>
+    permission: sweats.historyperm
+  maintenance:
+    description: Turn maintenance mode on or off and manage who can bypass it.
+    usage: /maintenance <on|off|add <player>|remove <player>|list>
+    permission: sweats.maintenance
+    aliases: [maintenence, maintainance]
+  login:
+    description: Log in to your account. Run it without a password to type it privately in chat.
+    usage: /login [password]
+    aliases: [l]
+  register:
+    description: Create an account. Run it without arguments to type the password privately in chat.
+    usage: /register [password] [password]
+  logout:
+    description: End your login session and return to the login area.
+    usage: /logout
+  changepass:
+    description: Change your password, or let an admin reset another player's password.
+    usage: /changepass [oldPassword] [newPassword] | /changepass <player> <newPassword>
+    aliases: [changepassword]
+  premium:
+    description: Show or check premium (Mojang account) login status, or hide the premium tip.
+    usage: /premium [status|check|mute|unmute]
+  home:
+    description: Open your homes menu.
+    usage: /home
+    permission: sweats.home
+  homeset:
+    description: Save your current position to a rank-unlocked home slot.
+    usage: /homeset <slot>
+    permission: sweats.homeset
+  vanish:
+    description: Hide yourself from ordinary players.
+    usage: /vanish
+    permission: sweats.vanish
+  unvanish:
+    description: Become visible to ordinary players again.
+    usage: /unvanish
+    permission: sweats.vanish
+  list:
+    description: List the players you can see.
+    usage: /list
+    permission: sweats.list
+  teamcreate:
+    description: Create a team.
+    usage: /teamcreate <name>
+    permission: sweats.team.create
+  teamdelete:
+    description: Delete your team, or any team as staff.
+    usage: /teamdelete [team]
+  teaminvite:
+    description: Invite a player to your team.
+    usage: /teaminvite <player>
+    permission: sweats.team.invite
+  teamlist:
+    description: List all teams.
+    usage: /teamlist
+  teamleave:
+    description: Leave your team.
+    usage: /teamleave
+  teamkick:
+    description: Kick a player from your team.
+    usage: /teamkick <player>
+  teaminfo:
+    description: Show information about a team.
+    usage: /teaminfo [team]
+  teamaccept:
+    description: Accept a team invitation.
+    usage: /teamaccept [team]
+  teamdeny:
+    description: Decline a team invitation.
+    usage: /teamdeny [team]
+  pc:
+    description: Send a private message to your team.
+    usage: /pc <message>
+    permission: sweats.team.chat
+    aliases: [teamchat, tc]
+  tpa:
+    description: Ask to teleport to another player.
+    usage: /tpa <player>
+    permission: sweats.tpa
+  tpaccept:
+    description: Accept a teleport request.
+    usage: /tpaccept [player]
+    permission: sweats.tpa
+  tpdeny:
+    description: Deny a teleport request.
+    usage: /tpdeny [player]
+    permission: sweats.tpa
+  tpcancel:
+    description: Cancel your outgoing teleport request.
+    usage: /tpcancel
+    permission: sweats.tpa
+  sweatschat:
+    description: Private chat for the Sweat and Sweat+ ranks.
+    usage: /sweatschat <message>
+    permission: sweats.chat.member
+    aliases: [sc]
+  pluscolor:
+    description: Change the colour of the + in your Sweat+ prefix.
+    usage: /pluscolor <colour|reset>
+    permission: sweats.rank.pluscolor
+  runes:
+    description: Open the rune browser or give runes to a player.
+    usage: /runes [give <rune> [tier] [player]]
+  runetable:
+    description: Open the Runic Table or give the Rune Table item.
+    usage: /runetable [give <player>]
+  friend:
+    description: Friend system - requests, list, best friends, nicknames and notifications.
+    usage: /friend <add|accept|deny|remove|list|best|nickname|notifications|toggle> [player] [page|nickname]
+    aliases: [f]
+  adminsword:
+    description: Get the Admin Sword (one-taps bosses, shows every weapon rune).
+    usage: /adminsword
+    permission: sweats.runes.admin
+  runeluck:
+    description: Multiply your boss rune drop chances (testing, resets on restart).
+    usage: /runeluck <multiplier|reset>
+    permission: sweats.runes.admin
+  runeaccess:
+    description: Grant or revoke Rune Table crafting/use access.
+    usage: /runeaccess <grant|revoke|check> <player> | list
+    permission: sweats.runes.admin
+  runepermdropchance:
+    description: Set a player's permanent boss rune drop bonus (percentage points).
+    usage: /runepermdropchance <player> [add|remove|set] <amount> | reset | view
+    permission: sweats.runes.admin
+  currency:
+    description: Give Sweat Coins or TryHard Shards to a player.
+    usage: /currency give <player> <sweatcoins|tryhardshards> <amount> [reason]
+    permission: sweats.currency.give
+  msg:
+    description: Send a private message to an online player.
+    usage: /msg <player> <message>
+    permission: sweats.message
+    aliases: [message, tell, whisper, w]
+  r:
+    description: Reply to the last player who messaged you.
+    usage: /r <message>
+    permission: sweats.message
+    aliases: [reply]
+permissions:
+  sweats.admin:
+    description: Allows reloading the Sweats config.
+    default: op
+  sweats.scoreboard.toggle:
+    description: Allows toggling your own scoreboard with /sweats scoreboard toggle.
+    default: true
+  sweats.scoreboard.admin:
+    description: Allows reloading and customizing the Sweats scoreboard.
+    default: op
+  sweats.vote.admin:
+    description: Allows inspecting the Votifier listener and simulating votes.
+    default: op
+  sweats.runes:
+    description: Allows opening the rune browser with /runes.
+    default: false
+  sweats.runes.admin:
+    description: Allows giving runes, the Rune Table and the Admin Sword, and managing rune drops.
+    default: op
+  sweats.runetable:
+    description: Allows opening the Runic Table with /runetable once the player has table access.
+    default: false
+  sweats.ram:
+    description: Allows viewing JVM heap usage with /ram.
+    default: op
+  sweats.ping:
+    description: Allows using /ping.
+    default: true
+  sweats.ping.others:
+    description: Allows checking another player's ping with /ping <player>.
+    default: op
+  sweats.rank.manage:
+    description: Allows creating, deleting and assigning ranks with /rank.
+    default: op
+  sweats.nick:
+    description: Allows changing your own nickname with /nick.
+    default: false
+  sweats.nick.others:
+    description: Allows changing another player's nickname with /nick.
+    default: op
+  sweats.leaderboard:
+    description: Allows placing and managing playtime leaderboard displays with /leaderboard.
+    default: op
+  sweats.permission.manage:
+    description: Allows granting and revoking permission nodes with /grant.
+    default: op
+  sweats.banperm:
+    description: Allows banning players with /ban.
+    default: op
+  sweats.kickperm:
+    description: Allows kicking players with /kick.
+    default: op
+  sweats.muteperm:
+    description: Allows muting players with /mute.
+    default: op
+  sweats.unbanperm:
+    description: Allows removing bans with /unban.
+    default: op
+  sweats.unmuteperm:
+    description: Allows removing mutes with /unmute.
+    default: op
+  sweats.historyperm:
+    description: Allows viewing punishment history with /history.
+    default: op
+  sweats.auth.admin:
+    description: Allows auth administration through /sweats auth and password resets with /changepass <player> <password>.
+    default: op
+  sweats.maintenance:
+    description: Allows turning maintenance mode on or off and managing its bypass list with /maintenance.
+    default: op
+  sweats.maintenance.bypass:
+    description: Lets a player join and stay online while maintenance mode is on.
+    default: op
+  sweats.home:
+    description: Allows opening the homes menu with /home.
+    default: true
+  sweats.homeset:
+    description: Allows saving a home with /homeset.
+    default: true
+  sweats.vanish:
+    description: Allows using /vanish and /unvanish. Also requires being an operator or DEV.
+    default: op
+  sweats.list:
+    description: Allows using /list.
+    default: true
+  sweats.team.create:
+    description: Allows creating a team.
+    default: true
+  sweats.team.delete:
+    description: Allows staff to delete any team by name.
+    default: op
+  sweats.team.invite:
+    description: Allows inviting players to a team you own.
+    default: true
+  sweats.team.manage:
+    description: Allows staff to kick a player from any team.
+    default: op
+  sweats.team.chat:
+    description: Allows using the team chat channel.
+    default: true
+  sweats.tpa:
+    description: Allows sending and answering teleport requests.
+    default: true
+  sweats.tpa.bypasscooldown:
+    description: Skips the /tpa cooldown.
+    default: op
+  sweats.chat.white:
+    description: Renders chat messages in white. Derived from the player's rank.
+    default: false
+  sweats.chat.member:
+    description: Allows using the private Sweat/Sweat+ chat. Derived from the player's rank.
+    default: false
+  sweats.beta.access:
+    description: Grants access to beta features. Derived from the player's rank.
+    default: false
+  sweats.rank.pluscolor:
+    description: Allows choosing the + colour in the Sweat+ prefix. Derived from the rank.
+    default: false
+  sweats.show:
+    description: Allows using /show. Derived from Grinder rank and above.
+    default: false
+  sweats.show.bypass:
+    description: Skips the /show cooldown.
+    default: op
+  sweats.stats:
+    description: Allows opening the /stats menu. Derived from Grinder rank and above.
+    default: false
+  sweats.scare:
+    description: Allows sending jumpscares with /scare. Derived from Sweat+ rank and above.
+    default: false
+  sweats.scare.bypass:
+    description: Lets the sender ignore the /scare cooldown.
+    default: op
+  sweats.gif:
+    description: Allows turning images into mapart items with /gif. Derived from Sweat+ rank and above.
+    default: false
+  sweats.rank.custom:
+    description: Allows custom rank name and color. Derived from Custom/Investor rank.
+    default: false
+  sweats.investor.discord:
+    description: Investor Discord role. Derived from Investor rank.
+    default: false
+  sweats.friend:
+    description: Allows using the friends system (/friend, /f).
+    default: true
+  sweats.friend.requests:
+    description: Allows receiving friend requests.
+    default: true
+  sweats.currency.give:
+    description: Allows giving Sweat Coins or TryHard Shards. Derived from CM and DEV ranks.
+    default: false
+  sweats.message:
+    description: Allows private messages with /msg and /r.
+    default: true
+  sweats.message.bypasscooldown:
+    description: Skips the private-message cooldown.
+    default: op
+  sweats.dupe.alerts:
+    description: Receives in-game duplication/security alerts.
+    default: op

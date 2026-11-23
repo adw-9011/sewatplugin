@@ -1,0 +1,552 @@
+# Sweats - /show settings
+#
+# Everything below is read on startup and on /sweats reload.
+
+# How far the /show message travels, in blocks. The default (100000) reaches the
+# whole world. Set to 0 to only show it to the player running the command.
+radius: 100000.0
+
+# Seconds a player has to wait between /show uses. Set to 0 to disable.
+# Players with the sweats.show.bypass permission ignore this.
+cooldown-seconds: 1.5
+
+# Chat format. MiniMessage syntax: https://docs.advntr.dev/minimessage/format.html
+# Tags: <player> <slot> <item>
+#   <player> - the sender's display name
+#   <slot>   - "main hand", "off hand", "helmet", "chestplate", "leggings" or "boots"
+#   <item>   - the item itself; hovering it in chat shows the real tooltip
+format: "<dark_gray>»</dark_gray> <white><player></white> <gray>showed their <slot>:</gray> <item>"
+
+messages:
+  empty: "<gray>Your <slot> slot is empty.</gray>"
+  cooldown: "<red>Slow down!</red> <gray>Try again in <seconds>s.</gray>"
+
+# Chat mention highlighting.
+# When a message contains an online player's name, only that name is recolored.
+# "Player1" and "@Player1" both count. The rest of the message keeps whatever your
+# rank/chat plugin set, so prefixes, chat colors and other chat plugins are left alone.
+mentions:
+  enabled: true
+  # Any named color (yellow, gold, aqua, ...) or a hex color like "#ffd700".
+  color: yellow
+
+# Chat emojis.
+# Codes like :dog:, :star: and <3 turn into colored symbols in chat. /emoji lists them all.
+# Set enabled to false to leave chat messages exactly as typed.
+emojis:
+  enabled: true
+
+# /scare <player> [jumpscare] - admin jumpscares.
+# Built-in jumpscares: jumpscare1 (creeper), jumpscare2 (glitch),
+# jumpscare3 (spider), jumpscare4 (void).
+scares:
+  # Seconds before the same player can be scared again.
+  # Players with sweats.scare.bypass ignore this.
+  cooldown-seconds: 3.0
+
+# /gif <image> - turn an image file into a mapart item in your inventory.
+# Drop image files into plugins/Sweats/gifs/ (png, jpg, jpeg, gif, bmp), then run
+# /sweats reload and use /gif <file>, e.g. /gif image01.png
+# The extension is optional: /gif image01 works too.
+gifs:
+  enabled: true
+  folder: "gifs"
+
+# /ping [player] - show latency in milliseconds.
+# 0-good-max-ms is green, above it up to moderate-max-ms is yellow, above is red.
+ping:
+  good-max-ms: 100
+  moderate-max-ms: 200
+
+# Compact per-player SMP sidebar. Supported line placeholders:
+# %rank%, %team%, %coin%, %shards%, %playtime%, %online%, %server_address%.
+# Colors use legacy ampersand codes (for example &6 and &l). The rank placeholder keeps
+# the configured color and formatting from the existing rank system.
+scoreboard:
+  enabled: true
+  default-visible: true
+  # Sidebar title; & color codes are supported.
+  title: "&6&lDONUT SMP"
+  # Empty uses server.address so the existing tablist/server address setting remains compatible.
+  server-address: ""
+  # Update period in ticks (20 ticks = 1 second; minimum 20, maximum 1200).
+  refresh-interval: 20
+  # 1-based sidebar order, at most 15 lines. Use a single-space line for a small visual gap.
+  lines:
+    - "&7Rank: %rank%"
+    - "&7Team: &f%team%"
+    - " "
+    - "&eCoin: %coin%"
+    - "&5Shards: %shards%"
+    - " "
+    - "&7Playtime: &f%playtime%"
+    - "&7Online: &f%online%"
+    - " "
+    - "&b%server_address%"
+
+# Header and footer above the native player list.
+tablist:
+  enabled: true
+
+# Name and address shown in the scoreboard and tablist.
+server:
+  name: "SURVIVAL MULTIPLAYER"
+  address: "sweat.playsmp.xyz"
+
+# ---------------------------------------------------------------------------------------------
+# Vote listener (Votifier)
+# ---------------------------------------------------------------------------------------------
+# Sweats receives Votifier votes itself, so no separate OyVotifier/NuVotifier plugin is needed.
+# The token and RSA keys are imported from plugins/oyvotifier on first start if they are missing.
+# Keep the port, token and public key in sync with the voting site's configuration.
+votes:
+  enabled: true
+  host: 0.0.0.0
+  port: 25536
+  # Protocol v2 shared secret. Imported automatically from OyVotifier when left blank.
+  token: ""
+  # Minecraft.Buzz and most older server lists use protocol v1 with the RSA key below.
+  allow-v1: true
+  # RSA private key in PKCS#8 format, relative to plugins/Sweats.
+  private-key: "vote/private.key"
+  # MiniMessage broadcast sent for every vote. {player} and {site} are replaced safely.
+  broadcast: "<gold><player></gold> <yellow>voted at <site> - thanks!</yellow>"
+  # Console commands run for every vote. {player} and {site} are replaced safely.
+  rewards: []
+
+# ---------------------------------------------------------------------------------------------
+# Homes, teams and teleport requests
+# ---------------------------------------------------------------------------------------------
+# /home opens a menu with 5 slots. The rank decides how many are usable:
+#   Default 1, Grinder 2, Sweat 3, Sweat+ 4, Custom 5, Investor 7.
+# Homes above the current limit are kept, only hidden until the rank returns.
+homes:
+  # Shared warmup before a home teleport. Moving, dying, changing world or teleporting cancels it.
+  warmup-seconds: 5
+
+# Worlds where homes may not be set and teleport requests may not land. Names are the world
+# folder names, e.g. "world_nether" and "world_the_end".
+teleport:
+  blocked-worlds: []
+
+# /teamcreate and friends. A team's capacity is decided by the owner's rank:
+#   Default and Grinder use base-size, Sweat 6, Sweat+ 10, Custom 15, Investor 20.
+teams:
+  base-size: 4
+  # How long a clickable invitation stays valid.
+  invite-seconds: 60
+
+# /tpa, /tpaccept, /tpdeny and /tpcancel.
+tpa:
+  # Seconds between two requests. sweats.tpa.bypasscooldown ignores this.
+  cooldown-seconds: 30
+  # Seconds before an unanswered request disappears.
+  expire-seconds: 60
+
+# Floating leaderboard displays, placed in the world with /leaderboard place <category>.
+# Categories: playtime, deaths, kills, afk, votes, streak (see /leaderboard categories).
+# Each board has its own theme (colour, symbol, pedestal block and icon) and shows the viewer's
+# own score at the top, followed by the top ten. Only real players who have joined are ranked:
+# NPC/shop profiles from the server user cache are ignored, but a real player whose name looks like
+# a shopkeeper is included once they join. Offline players stay on the boards.
+leaderboard:
+  enabled: true
+  # Only players within this many blocks of a board see it.
+  view-distance: 48.0
+  # How often the viewer's own score line is refreshed, in seconds.
+  refresh-seconds: 2
+  # How often the top ten is recalculated, in seconds. It is also rebuilt whenever
+  # a nickname changes or a vote is received.
+  ranking-refresh-seconds: 60
+
+# AFK tracking, used by the "afk" leaderboard. This only records time; nobody is kicked.
+# A player is AFK after this many seconds without movement, chat, commands or interaction.
+afk:
+  enabled: true
+  timeout-seconds: 300
+  # How often active AFK sessions are checked, in seconds.
+  check-seconds: 1
+
+# ---------------------------------------------------------------------------------------------
+# Maintenance mode
+# ---------------------------------------------------------------------------------------------
+# /maintenance on   - changes the server-list MOTD, kicks everyone who cannot bypass, and rejects
+#                     every new connection until /maintenance off.
+# /maintenance add <player> | remove <player> | list - manage who may still join.
+# Ops and players with sweats.maintenance.bypass can always join. The on/off switch and the bypass
+# list are saved in plugins/Sweats/maintenance.yml, so maintenance survives a restart.
+# Both texts are MiniMessage. Use \n for a new line.
+maintenance:
+  motd: "<red><bold>Maintenance</bold></red>\n<gray>We are updating the server. Please check back soon.</gray>"
+  kick-message: "<red>Server is under maintenance.</red>\n<gray>Please check back soon.</gray>"
+
+# ---------------------------------------------------------------------------------------------
+# Login / account protection
+# ---------------------------------------------------------------------------------------------
+# Sweats now owns authentication. Before a player logs in they are spawned at the location
+# below instead of their saved position, so the client never receives their real coordinates.
+# While waiting they cannot move, chat, use commands, interact, take damage or see other players.
+#
+# Migrating from SimpleLogin:
+#   1. Stop the server.
+#   2. Remove the SimpleLogin jar from plugins/ (keep plugins/SimpleLogin/passwords.db).
+#   3. If you have the old server's password database, copy it to
+#      plugins/Sweats/legacy-passwords.db before starting. It is no longer shipped in the jar.
+#   4. Start the server once. The legacy file is imported first, followed by
+#      plugins/SimpleLogin/passwords.db for any account it does not contain. Hashes are upgraded
+#      to PBKDF2 after the first login.
+#   5. Check the console for "Imported N ... account(s)" or run /sweats auth status.
+#   6. Keep passwords.db as a backup until you have confirmed that every player can log in.
+#
+# Each import runs once. /sweats auth import forces another pass if you restore an old file.
+#
+# Passwords typed as command arguments (/login <password>) are written to the server log by
+# Paper before plugins see them. Use /login, /register and /changepass without arguments and
+# type the password in chat instead; those chat messages are cancelled before they are shown
+# or logged. You can also set commands.log: false in spigot.yml (this hides every command
+# from the log) or install ProtocolLib.
+auth:
+  # If the database cannot be opened, the gate fails closed: new connections are rejected and
+  # waiting players are not released. Fix auth.db and restart the server.
+  enabled: true
+
+  # Where waiting players are placed. With use-world-spawn: true the spawn point of `world`
+  # is used (an empty world means "the world the player was going to spawn in").
+  # The client receives the chunks around this place, so an empty dedicated world/room is
+  # better than the spawn of a protected world. For a dedicated login room, set
+  # use-world-spawn: false and fill in the coordinates.
+  location:
+    world: ""
+    use-world-spawn: true
+    x: 0.5
+    y: 100.0
+    z: 0.5
+    yaw: 0.0
+    pitch: 0.0
+
+  min-password-length: 8
+  max-password-length: 128
+
+  # Kick players who do not log in within this many seconds. 0 disables the timeout.
+  login-timeout-seconds: 300
+  # How often the "please log in" reminder is repeated.
+  reminder-seconds: 5
+
+  # Wrong passwords before the account is temporarily locked, and for how long. A correct
+  # password is still accepted during the lock, so a malicious player cannot lock out the owner.
+  max-failed-attempts: 5
+  lockout-seconds: 60
+  # Minimum time between two password attempts, stored per account and address in auth.db.
+  attempt-cooldown-ms: 750
+  # Registration hashes with the same PBKDF2 cost as a login, so it gets its own per-account and
+  # per-address cooldown. It is intentionally not shared with the login throttle.
+  register-cooldown-ms: 5000
+
+  # Apply blindness while waiting. The player is also frozen and invulnerable.
+  blindness: true
+  # Hide waiting players from each other (and from logged-in players).
+  # Turning this off exposes entities and nametags to unauthenticated clients; only do that on
+  # a dedicated login server.
+  hide-players: true
+  # Cancel chat and commands from waiting players.
+  block-chat: true
+  block-commands: true
+
+  # Remember successful logins so players do not have to type their password on every join.
+  # The session is tied to the account and, by default, to the IP address. Only version-4 UUIDs
+  # (online-mode or forwarded by a proxy) can restore a session; offline identities always log in.
+  session:
+    enabled: true
+    duration-hours: 168
+    bind-ip: true
+
+  # Premium players (real Mojang accounts) do not need a password.
+  #
+  # mode: OFF     - everyone must log in.
+  # mode: PROXY   - trust UUID version 4, which only an online-mode server or a correctly
+  #                 configured proxy can produce. Because a backend port can be reached directly,
+  #                 the proxy's address must be listed under trusted-proxies; a connection from
+  #                 anywhere else never gets the passwordless bypass and falls back to a Mojang
+  #                 check (or /login when verification is unavailable). With verify-mojang: true
+  #                 the player waits in the login area until Mojang confirms the name/UUID pair.
+  # mode: MOJANG  - same, but never falls back to trusting the proxy: if Mojang cannot be
+  #                 reached, the player has to log in with a password.
+  #
+  # On a plain offline-mode server every UUID is version 3, so premium bypass cannot work
+  # there: there is no cryptographic proof that the person typing the name owns the account.
+  premium:
+    enabled: true
+    mode: PROXY
+    verify-mojang: true
+    # Literal IPv4/IPv6 addresses or CIDR blocks of your proxy, for example 10.0.0.5 or
+    # 192.168.0.0/24. Empty means nobody is trusted and the passwordless PROXY bypass is off.
+    # Forwarding headers are never read; this is the socket peer address of the connection.
+    trusted-proxies: []
+    # After each password login, show "use /premium if you have a Minecraft account" with a
+    # clickable opt-out. Verified premium players never see it. The opt-out is stored per account.
+    suggestion: true
+
+  # Copy accounts from an optional plugins/Sweats/legacy-passwords.db, then from SimpleLogin's
+  # database. Both run at most once after a successful import; /sweats auth import forces a retry.
+  import-simplelogin: true
+  # Relative to plugins/Sweats, or an absolute path.
+  simplelogin-database: "../SimpleLogin/passwords.db"
+
+  # Messages use MiniMessage syntax. Placeholders: <player> <seconds> <attempts> <length> <status>
+  messages:
+    login-required: "<yellow>Please log in.</yellow> <gray>Use <white>/login</white> and type your password in chat.</gray>"
+    register-required: "<yellow>Please register.</yellow> <gray>Use <white>/register</white> and type a password in chat.</gray>"
+    login-prompt: "<yellow>Type your password in chat to log in.</yellow> <gray>Type <white>cancel</white> to stop.</gray>"
+    login-success: "<green>Logged in. Welcome back!</green>"
+    login-failed: "<red>Wrong password.</red> <gray><attempts> attempt(s) left.</gray>"
+    login-changed: "<red>Your password changed while you were logging in.</red> <gray>Please try again.</gray>"
+    login-locked: "<red>Too many wrong passwords.</red> <gray>Try again in <seconds> seconds.</gray>"
+    login-cooldown: "<red>Slow down.</red> <gray>Wait a moment before trying again.</gray>"
+    register-cooldown: "<red>Slow down.</red> <gray>Wait a moment before trying to register again.</gray>"
+    register-prompt: "<yellow>Type a password in chat to create your account.</yellow> <gray>At least <length> characters.</gray>"
+    register-confirm: "<yellow>Type the same password again.</yellow>"
+    register-success: "<green>Account created and logged in. Welcome!</green>"
+    register-mismatch: "<red>The passwords do not match.</red> <gray>Start again with /register.</gray>"
+    register-too-short: "<red>That password is too short.</red> <gray>Use at least <length> characters.</gray>"
+    password-too-long: "<red>That password is too long.</red> <gray>Use at most <length> characters.</gray>"
+    password-is-name: "<red>Choose a password that is not your player name.</red>"
+    already-registered: "<red>That account is already registered.</red> <gray>Use /login.</gray>"
+    not-registered: "<red>That account is not registered.</red> <gray>Use /register.</gray>"
+    already-authenticated: "<gray>You are already logged in.</gray>"
+    not-logged-in: "<gray>You are not logged in.</gray>"
+    auth-disabled: "<red>Authentication is disabled on this server.</red>"
+    auth-unavailable: "<red>Authentication is temporarily unavailable.</red> <gray>Contact an administrator.</gray>"
+    auth-busy: "<red>The login service is busy.</red> <gray>Please try again in a moment.</gray>"
+    auth-save-failed: "<red>Could not save the password.</red> <gray>Nothing was changed; try again or contact an administrator.</gray>"
+    chat-blocked: "<red>You cannot chat before logging in.</red>"
+    command-blocked: "<red>You cannot use that command before logging in.</red>"
+    logout-success: "<yellow>Logged out.</yellow> <gray>You were moved back to the login area.</gray>"
+    session-restored: "<gray>Welcome back. Your session was restored.</gray>"
+    password-command-warning: "<gray>Tip: use <white>/login</white> without arguments next time so the password is not written to the server log.</gray>"
+    password-changed: "<green>Password changed.</green>"
+    password-wrong: "<red>Wrong password.</red>"
+    password-current: "<yellow>Type your current password in chat.</yellow>"
+    password-new: "<yellow>Type your new password in chat.</yellow>"
+    premium-status: "<gray>Premium login: <white><status></white></gray>"
+    premium-disabled: "<gray>Premium login is disabled on this server.</gray>"
+    premium-verified: "<green>Verified with Mojang. You can join without a password from now on.</green>"
+    premium-login: "<green>Premium account recognised. Welcome!</green>"
+    premium-offline: "<red>This server is in offline mode, so premium login cannot be verified safely.</red> <gray>Use /login. Premium bypass requires online-mode or a proxy with forwarding.</gray>"
+    premium-unavailable: "<red>Could not verify that account with Mojang right now.</red> <gray>Try again later or log in with your password.</gray>"
+    premium-suggestion: "<aqua>Use <click:run_command:'/premium'><white><u>/premium</u></white></click> if you have a Minecraft account - you can skip the password.</aqua> <dark_gray>|</dark_gray> <gray><click:run_command:'/premium mute'><u>[Click this so it doesn't send this next time]</u></click></gray>"
+    premium-suggestion-muted: "<gray>Okay, the premium tip will not be shown again.</gray> <gray>Run <white>/premium unmute</white> to bring it back.</gray>"
+    premium-suggestion-enabled: "<gray>The premium tip will be shown again after your next login.</gray>"
+    admin-password-changed: "<green>Changed the password for <white><player></white>.</green>"
+    admin-password-not-found: "<red>No account found for <white><player></white>.</red> <gray>They need to join the server once first, or check the spelling.</gray>"
+    password-changed-by-admin: "<yellow>An admin changed your password.</yellow> <gray>Use the new one the next time you log in.</gray>"
+    timeout: "<red>You did not log in in time.</red>"
+    cancelled: "<gray>Login cancelled.</gray>"
+
+# ---------------------------------------------------------------------------------------------
+# Rank durations and command cooldowns
+# ---------------------------------------------------------------------------------------------
+# Rank durations in days. Set to 0 for permanent (Sweat).
+# These are used when assigning ranks via /rank set or the rank assignment system.
+ranks:
+  durations:
+    grinder: 30
+    sweat: 0
+    sweatplus: 35
+    custom: 60
+    investor: 0  # 0 = permanent, or set a value in days
+
+# Command cooldowns per rank (in seconds). Lower ranks inherit higher rank limits.
+# Set to 0 to disable cooldown for that rank.
+# These override the global cooldowns above for specific ranks.
+command-cooldowns:
+  show:
+    grinder: 1.0
+    sweat: 0.5
+    sweatplus: 0.2
+    custom: 0.1
+    investor: 0.0
+  scare:
+    sweatplus: 2.0
+    custom: 1.0
+    investor: 0.5
+  gif:
+    sweatplus: 5.0
+    custom: 2.0
+    investor: 1.0
+  tpa:
+    default: 30
+    grinder: 25
+    sweat: 20
+    sweatplus: 15
+    custom: 10
+    investor: 5
+
+# ---------------------------------------------------------------------------------------------
+# Friends system
+# ---------------------------------------------------------------------------------------------
+# /friend and /f - Hypixel-style friends system with requests, best friends, nicknames and notifications.
+friends:
+  # Hours before a friend request expires. Expired requests cannot be accepted.
+  request-expire-hours: 72
+  # Maximum number of friends a player can have. Set to 0 for no limit.
+  max-friends: 200
+  # Maximum number of best friends a player can have.
+  max-best-friends: 10
+  # Number of friends to show per page in /friend list.
+  list-page-size: 10
+  # Seconds a player must wait between friend requests. Set to 0 to disable.
+  # The cooldown only starts when a request is actually created or completed.
+  request-cooldown-seconds: 3
+  # Days to keep already-delivered offline notifications before pruning them.
+  notification-retention-days: 30
+  # Days to keep undelivered offline notifications before pruning them.
+  undelivered-notification-retention-days: 7
+  # Default notification preference for new players.
+  default-notifications-enabled: true
+  # Default incoming friend request preference for new players.
+  default-requests-enabled: true
+  # Maximum length of a personal friend nickname.
+  max-nickname-length: 24
+
+# ---------------------------------------------------------------------------------------------
+# Runes and the Runic Table
+# ---------------------------------------------------------------------------------------------
+# Hypixel SkyBlock-style cosmetic runes. Ported from the SweatyRunes addon.
+# Everything below is read on startup and on /sweats reload.
+runes:
+  # Texture hash overrides. Key = rune id, value = hash from
+  # textures.minecraft.net/texture/<HASH>. Runes without a hash use a fallback item.
+  hashes:
+    # snow: ""
+    # ice: ""
+    # darkness_within: ""
+    # soultwist: ""
+    # fading_white: ""
+    # slimy: ""
+    # fading_green: ""
+    # grand_searing: ""
+    # grand_freezing: ""
+    # spellbound: ""
+    # primal_fear: ""
+    # ice_skates: ""
+    # bark_tunes: ""
+    # meow_music: ""
+    # golden_carpet: ""
+    # smitten: ""
+    # rainy_day: ""
+    # super_pumpkin: ""
+    # ornamental: ""
+    # heartsplosion: ""
+    # blooming: ""
+    # flowery_carpet: ""
+    # grand_leafing: ""
+    # soul_slice: ""
+    # turkey: ""
+    # peafowl: ""
+    # antlers: ""
+    # crowned: ""
+    # fading_rainbow: ""
+    # grand_gardening: ""
+
+  # Boss rune drops. Chances are in PERCENT.
+  drops:
+    chance:            # COMMON chance per boss kill
+      warden: 0.104
+      wither: 0.11
+      dragon: 0.115
+      elder_guardian: 0.119
+    max-perm-bonus: 5.0      # cap for /runepermdropchance (percentage points)
+    rarity-multiplier: 0.9   # each rarity step is 10% rarer
+    tier-weights:            # percent chance of the dropped rune's tier
+      t1: 80
+      t2: 15
+      t3: 5
+
+  # Rune Table: shape is 3 rows of 3 letters, ingredients map each letter to a Material.
+  table:
+    recipe:
+      shape:
+        - "ODO"
+        - "ETE"
+        - "OOO"
+      ingredients:
+        O: OBSIDIAN
+        D: DIAMOND_BLOCK
+        E: ENDER_EYE
+        T: ENCHANTING_TABLE
+
+  # Resource pack (the SweatyRunes pack) that supplies the Rune Table model.
+  # Upload the zip somewhere with a DIRECT download link and paste the URL here.
+  # sha1 must match the zip; update both whenever the pack changes.
+  resource-pack:
+    enabled: true
+    url: ""
+    sha1: "bff291fcf1e314552a58f18975b9a7d6530ba3ad"
+    required: false
+    prompt: "SweatyRunes needs its resource pack for custom models."
+
+# ---------------------------------------------------------------------------------------------
+# Currency
+# ---------------------------------------------------------------------------------------------
+# Two balances: Sweat Coins and TryHard Shards. Mob rewards are configurable per currency.
+# Players earn Sweat Coins from mob kills; TryHard Shards default to staff grants only.
+currency:
+  enabled: true
+  # Hard limit for a single /currency give. Also protects the 64-bit balance from overflow.
+  max-give-amount: 1000000000
+  reason-max-length: 80
+  rewards:
+    sweat-coins:
+      normal-mob: 5
+      boss-mob: 100
+    tryhardshards:
+      normal-mob: 0
+      boss-mob: 0
+  action-bar:
+    enabled: true
+    # Refresh interval in ticks. Balances are cached; this never queries the database.
+    interval-ticks: 40
+
+# ---------------------------------------------------------------------------------------------
+# Private messages
+# ---------------------------------------------------------------------------------------------
+messaging:
+  enabled: true
+  cooldown-seconds: 1
+  max-length: 256
+
+# ---------------------------------------------------------------------------------------------
+# Discord webhook logging
+# ---------------------------------------------------------------------------------------------
+# Seven independent channels. Leave a URL blank to disable only that channel.
+# The integration stays completely off while discord-logging.enabled is false or every URL is blank.
+# No token or bot account is needed: paste each channel's webhook URL.
+# All embeds use CV2 (Components V2) with default grey theme (no side colors).
+discord-logging:
+  enabled: true
+  queue-capacity: 512
+  timeout-seconds: 10
+  retry-attempts: 3
+  retry-delay-millis: 500
+  console:
+    enabled: true
+  channels:
+    join-leave: "https://discord.com/api/webhooks/1573968263656771704/NCp16IEiZFbZfQ1b2g7NE4bqLtqGoZQ2_18kFYuknH9x3TvYn1lIot27t8DGtNI2FS49"
+    chat-logs: "https://discord.com/api/webhooks/1573968460743184438/-wBkjrZ3VzKdaMNtx0EuGlXBq0v3wtmceA1B9sYBgYYLtxYOEWNAkaUhPYXu5jOr_R3E"
+    private-messages: "https://discord.com/api/webhooks/1573991890779373589/nruay_OGlrSiSwyGs5WlJg5mxGE1-dqTYF0_bp-9sSHd5ngH4DivyL6nLd67lLoU314S"
+    command-logs: "https://discord.com/api/webhooks/1573991961084563614/_ZlbSc5eEvs5B_xucjDvl-1y8hioDdsC_MVVYqsm8lQ0L5pj0xRq1bjcNrfxAgMrYmyy"
+    dupe-logs: "https://discord.com/api/webhooks/1573992031494086787/cXCqvJfTqYtAa9-fe0lJDod8sViogApmAgYrRmCS5ZiuKo27j-uiZEtLBcrHW1yPX3aY"
+    console-logs: "https://discord.com/api/webhooks/1573992140449652839/IqRsC_IPi3P5ck1UsMYnyl8_moctLwXOULwEz-fGiLgRzHt6P5m86pZHhQMWHH7gDqG7"
+    team-chat-logs: "https://discord.com/api/webhooks/1573992202663886848/aEb-MS2kkLzg51HXNSpNazFQ5DenPlTDhvw1UP_AVRLeXvoIuBePPbBr9Y-EWCuKpB-3"
+
+# ---------------------------------------------------------------------------------------------
+# Duplication detection
+# ---------------------------------------------------------------------------------------------
+# Detection and evidence only. Sweats never deletes items, bans or rolls anything back.
+dupe:
+  enabled: true
+  # Minimum seconds between two reports with the same player and finding code.
+  report-cooldown-seconds: 30
+  alerts:
+    # In-game notice to players with sweats.dupe.alerts.
+    in-game: true

@@ -1,0 +1,14 @@
+.gradle/
+build/
+.idea/
+*.iml
+run/
+test-server/
+
+# Credential material: password databases must never be committed. A legacy copy used to live
+# in src/main/resources; it was removed from the index and must stay untracked. Operators can
+# still place one in plugins/Sweats/ for a one-time import.
+legacy-passwords.db
+legacy-passwords.db-shm
+legacy-passwords.db-wal
+passwords.db
